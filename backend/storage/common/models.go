@@ -1,0 +1,31 @@
+package common
+
+type CreateUserRequest struct {
+	Login        string
+	PasswordHash string
+	Email        string
+	Name         string
+	Info         string
+}
+
+type DetailUserRequest struct {
+	Login string
+}
+
+type DetailUserResponse struct {
+	Id           int
+	Login        string
+	PasswordHash string
+	Email        string
+	Name         string
+	Info         string
+}
+
+type UpdateUserRequest struct {
+	Id           int
+	Login        string
+	PasswordHash string
+	Email        string
+	Name         string
+	Info         string
+}
