@@ -8,6 +8,17 @@ import (
 	"go.uber.org/zap"
 )
 
+type Storage interface {
+	DetailUser(ctx context.Context, req *DetailUserRequest) (res *DetailUserResponse, err error)
+	UpdateUser(ctx context.Context, req *UpdateUserRequest) (err error)
+
+	AddNote(ctx context.Context, req *AddNoteRequest) (err error)
+	UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error)
+	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
+	DeleteNote(ctx context.Context, req *DeleteNoteRequest)
+	ListNotes(ctx context.Context, req *ListNotesRequest)
+}
+
 type storage struct {
 	conn *pgxpool.Conn
 	log  *zap.SugaredLogger

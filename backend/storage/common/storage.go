@@ -11,7 +11,6 @@ import (
 type Storage interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest) (id int, err error)
 	DetailUser(ctx context.Context, req *DetailUserRequest) (res *DetailUserResponse, err error)
-	NewStorage(conn *pgxpool.Conn, log *zap.SugaredLogger) *storage
 }
 
 type storage struct {
