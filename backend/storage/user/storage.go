@@ -9,14 +9,14 @@ import (
 )
 
 type Storage interface {
-	DetailUser(ctx context.Context, req *DetailUserRequest) (res *DetailUserResponse, err error)
+	DetailUser(ctx context.Context, req *DetailUserRequest) (res DetailUserResponse, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest) (err error)
 
 	AddNote(ctx context.Context, req *AddNoteRequest) (err error)
 	UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error)
 	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
-	DeleteNote(ctx context.Context, req *DeleteNoteRequest)
-	ListNotes(ctx context.Context, req *ListNotesRequest)
+	DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err error)
+	ListNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error)
 }
 
 type storage struct {
@@ -28,6 +28,12 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res De
 	query := `SELECT login, password_hash, email, name, info FROM "user" WHERE 1=1`
 	args := []any{}
 	cnt := 1
+
+	if req.Id != 0 {
+		query += " AND id=$" + strconv.Itoa(cnt)
+		args = append(args, req.Login)
+		cnt++
+	}
 
 	if req.Login != "" {
 		query += " AND login=$" + strconv.Itoa(cnt)
@@ -101,6 +107,6 @@ func (s storage) ListNotes(ctx context.Context, req *ListNotesRequest) (res []No
 	return
 }
 
-func NewStorage(conn *pgxpool.Conn, log *zap.SugaredLogger) *storage {
+func NewStorage(conn *pgxpool.Conn, log *zap.SugaredLogger) Storage {
 	return &storage{conn: conn, log: log}
 }

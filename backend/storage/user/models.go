@@ -1,6 +1,7 @@
 package user
 
 type DetailUserRequest struct {
+	Id    int
 	Login string
 }
 
@@ -44,9 +45,10 @@ type DeleteNoteRequest struct {
 }
 
 type ListNotesRequest struct {
-	UserId int
-	Skip   int
-	Limit  int
+	UserId   int
+	Skip     int
+	Limit    int
+	Personal bool
 }
 
 type Note struct {
