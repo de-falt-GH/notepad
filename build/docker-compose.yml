@@ -3,8 +3,8 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ../backend  # Context is the 'backend' directory if it contains the Dockerfile
-      dockerfile: ../build/backend/Dockerfile  # Assuming Dockerfile is directly inside 'backend' directory
+      context: ../backend
+      dockerfile: ../build/backend/Dockerfile
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
@@ -21,7 +21,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Ensure this path is correct
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT}:5432"
