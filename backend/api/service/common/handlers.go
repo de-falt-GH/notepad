@@ -19,18 +19,18 @@ func (s *service) postRegister(ctx *gin.Context) {
 		return
 	}
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 15)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.password), 15)
 	if err != nil {
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "password hashing failed"})
 		return
 	}
 
 	id, err := s.storage.CreateUser(ctx, &c_storage.CreateUserRequest{
-		Login:        req.Login,
+		Login:        req.login,
 		PasswordHash: string(passwordHash),
-		Email:        req.Email,
-		Name:         req.Name,
-		Info:         req.Info,
+		Email:        req.email,
+		Name:         req.name,
+		Info:         req.info,
 	})
 	if err != nil {
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "saving to db failed"})
@@ -57,8 +57,8 @@ func (s *service) postAuthorize(ctx *gin.Context) {
 		return
 	}
 
-	user, err := s.storage.DetailUser(ctx, &c_storage.DetailUserRequest{Login: req.Login})
-	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)) != nil {
+	user, err := s.storage.DetailUser(ctx, &c_storage.DetailUserRequest{Login: req.login})
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.password)) != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid credentials"})
 		return
 	}

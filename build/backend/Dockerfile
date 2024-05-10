@@ -4,7 +4,5 @@ COPY . .
 RUN go mod download
 RUN go build -o backend_app .
 
-FROM golang:1.22-alpine
-WORKDIR /app
-COPY --from=builder /app/backend_app .
 CMD ["./backend_app"]
+
