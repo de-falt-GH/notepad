@@ -1,5 +1,5 @@
 # Use a specific version of Golang for reproducibility.
-FROM golang:1.21 as builder
+FROM golang:1.22 as builder
 
 # Set the working directory inside the container.
 WORKDIR /app
@@ -14,12 +14,12 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN go build -o main .
+RUN go build -o backend_app .
 
 # Use a smaller base image to run the compiled binary
-FROM golang:1.21-alpine
+FROM golang:1.22-alpine
 WORKDIR /app
-COPY --from=builder /app/main .
+COPY --from=builder /app/backend_app .
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["./backend_app"]

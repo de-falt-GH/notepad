@@ -12,5 +12,5 @@ CREATE TABLE note (
     user_id INT REFERENCES "user",
     name TEXT NOT NULL, 
     data TEXT NOT NULL, 
-    public BOOLEAN,
+    public BOOLEAN
 );

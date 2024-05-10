@@ -3,8 +3,8 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./backend  # Context is the 'backend' directory if it contains the Dockerfile
-      dockerfile: Dockerfile  # Assuming Dockerfile is directly inside 'backend' directory
+      context: ../backend  # Context is the 'backend' directory if it contains the Dockerfile
+      dockerfile: ../build/backend/Dockerfile  # Assuming Dockerfile is directly inside 'backend' directory
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
