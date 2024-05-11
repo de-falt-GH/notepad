@@ -12,6 +12,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - db
     develop:
       watch:
         - action: rebuild
@@ -26,6 +28,8 @@ services:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
       FRONTEND_PORT: ${FRONTEND_PORT}
+    depends_on:
+      - backend
     develop:
       watch:
         - action: rebuild
