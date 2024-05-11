@@ -12,6 +12,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    develop:
+      watch:
+        - action: rebuild
+          path: ../backend
 
   db:
     container_name: note_db
