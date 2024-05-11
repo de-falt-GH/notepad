@@ -20,10 +20,11 @@
 	"importOrderSortSpecifiers": true,
 	"importOrder": [
 		"^.*\\.css$",
+		"^svelte.*$",
 		"<THIRD_PARTY_MODULES>",
-		"^@/lib/.*$",
-		"^@/schemas/.*$",
-		"^@/components/.*$",
+		"^$lib/schemas/.*$",
+		"^$lib/components/.*$",
+		"^$lib/.*$",
 		"^@/routes/.*$",
 		"^@/.*$",
 		"^\\..*$"
