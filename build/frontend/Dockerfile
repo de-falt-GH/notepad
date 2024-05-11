@@ -1,15 +1,14 @@
-FROM node:14-alpine
+FROM node:20-alpine AS base
+WORKDIR /app/frontend
 
-WORKDIR /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-COPY ./frontend/package*.json ./
+COPY package.json pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-RUN npm install
+COPY . .
+RUN pnpm build
 
-COPY ./frontend .
-
-RUN npm run build
-
-RUN npm install -g serve
-
-CMD ["serve", "-s", "build"]
+CMD ["node", "build"]

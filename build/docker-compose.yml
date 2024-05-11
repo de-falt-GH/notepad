@@ -17,6 +17,18 @@ services:
         - action: rebuild
           path: ../backend
 
+  frontend:
+    container_name: note_frontend
+    build:
+      context: ../frontend/
+      dockerfile: ../build/frontend/Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:5173"
+    develop:
+      watch:
+        - action: rebuild
+          path: ../frontend
+
   db:
     container_name: note_db
     image: postgres:latest
