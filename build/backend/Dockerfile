@@ -1,7 +1,11 @@
 FROM golang:1.22 as builder
+
 WORKDIR /app
-COPY . .
+
+COPY go.mod go.sum ./
 RUN go mod download
+
+COPY . .
 RUN go build -o backend_app .
 
 CMD ["./backend_app"]
