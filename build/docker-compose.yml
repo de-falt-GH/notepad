@@ -23,7 +23,9 @@ services:
       context: ../frontend/
       dockerfile: ../build/frontend/Dockerfile
     ports:
-      - "${FRONTEND_PORT}:5173"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT}
     develop:
       watch:
         - action: rebuild
