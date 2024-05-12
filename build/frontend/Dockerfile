@@ -10,6 +10,8 @@ RUN pnpm add -g serve
 COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
+ARG BACKEND_PORT
+
 COPY . .
 RUN pnpm build
 

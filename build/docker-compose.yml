@@ -27,6 +27,8 @@ services:
     build:
       context: ../frontend/
       dockerfile: ../build/frontend/Dockerfile
+      args:
+        BACKEND_PORT: ${BACKEND_PORT}
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
