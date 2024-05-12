@@ -3,6 +3,7 @@ package api
 import (
 	commonStorage "kursarbeit/storage/common"
 	userStorage "kursarbeit/storage/user"
+	"net/http"
 	"os"
 
 	commonService "kursarbeit/api/service/common"
@@ -17,9 +18,21 @@ func Serve(commonStorage commonStorage.Storage, userStorage userStorage.Storage,
 	userService := userService.NewService(userStorage, log)
 
 	router := gin.Default()
+
+	router.Use(func(ctx *gin.Context) {
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if ctx.Request.Method == "OPTIONS" {
+			ctx.Writer.WriteHeader(http.StatusOK)
+		}
+
+		ctx.Next()
+	})
+
 	commonService.SetRoutes(router.Group(""))
 	userService.SetRoutes(router.Group(""))
 
-	port := os.Getenv("BACKEND_PORT")
-	router.Run("127.0.0.1:" + port)
+	backendPort := os.Getenv("BACKEND_PORT")
+	router.Run(":" + backendPort)
 }
