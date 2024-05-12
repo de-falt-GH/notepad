@@ -1,3 +1,5 @@
+name: notepad
+
 services:
   backend:
     container_name: note_backend
