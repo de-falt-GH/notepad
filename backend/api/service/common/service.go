@@ -1,7 +1,6 @@
 package common
 
 import (
-	auth "kursarbeit/api/service"
 	c_storage "kursarbeit/storage/common"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +13,7 @@ type service struct {
 }
 
 func (s *service) SetRoutes(rg *gin.RouterGroup) {
-	common := rg.Group("").Use(auth.Auth())
+	common := rg.Group("")
 
 	common.POST("/login", s.postAuthorize)
 	common.POST("/register", s.postRegister)
