@@ -1,3 +1,3 @@
 export * from './animation'
 export * from './styling'
-export * from './local-storage.svelte'
+export * from './local-storage'
