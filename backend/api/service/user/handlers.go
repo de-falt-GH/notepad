@@ -26,10 +26,10 @@ func (s service) DetailUser(ctx *gin.Context) {
 	}
 
 	res := DetailUserResponse{
-		login: user.Login,
-		email: user.Email,
-		name:  user.Name,
-		info:  user.Info,
+		Login: user.Login,
+		Email: user.Email,
+		Name:  user.Name,
+		Info:  user.Info,
 	}
 
 	ctx.IndentedJSON(http.StatusOK, res)
@@ -64,9 +64,9 @@ func (s service) AddNote(ctx *gin.Context) {
 
 	if err := s.storage.AddNote(ctx, &user_storage.AddNoteRequest{
 		UserId: id,
-		Name:   req.name,
-		Data:   req.data,
-		Public: req.public,
+		Name:   req.Name,
+		Data:   req.Data,
+		Public: req.Public,
 	}); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "adding note to db failed"})
@@ -83,10 +83,10 @@ func (s service) UpdateNote(ctx *gin.Context) {
 	}
 
 	if err := s.storage.UpdateNote(ctx, &user_storage.UpdateNoteRequest{
-		Id:     req.id,
-		Name:   req.name,
-		Data:   req.data,
-		Public: req.public,
+		Id:     req.Id,
+		Name:   req.Name,
+		Data:   req.Data,
+		Public: req.Public,
 	}); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "updating note failed failed"})

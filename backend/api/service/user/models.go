@@ -1,48 +1,48 @@
 package user
 
 type DetailUserRequest struct {
-	id int
+	Id int `json:"id"`
 }
 
 type DetailUserResponse struct {
-	login string
-	email string
-	name  string
-	info  string
+	Login string `json:"login"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	Info  string `json:"info"`
 }
 
 type UpdateUserRequest struct {
-	id       string
-	login    string
-	password string
-	email    string
-	name     string
-	info     string
+	Id       string `json:"id"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Info     string `json:"info"`
 }
 
 type AddNoteRequest struct {
-	name   string
-	data   string
-	public bool
+	Name   string `json:"name"`
+	Data   string `json:"data"`
+	Public bool   `json:"public"`
 }
 
 type UpdateNoteRequest struct {
-	id     int
-	name   string
-	data   string
-	public bool
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Data   string `json:"data"`
+	Public bool   `json:"public"`
 }
 
 type DetailNoteRequest struct {
-	id int
+	Id int `json:"id"`
 }
 
 type DeleteNoteRequest struct {
-	id string
+	Id string `json:"id"`
 }
 
 type ListNotesRequest struct {
-	limit    int
-	skip     int
-	personal bool
+	limit    int  `json:"limit"`
+	skip     int  `json:"skip"`
+	personal bool `json:"personal"`
 }
