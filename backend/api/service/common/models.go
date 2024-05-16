@@ -1,14 +1,14 @@
 package common
 
 type registerRequest struct {
-	login    string
-	password string
-	email    string
-	name     string
-	info     string
+	Login    string `json:"login"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Info     string `json:"info"`
 }
 
 type authorizeRequest struct {
-	login    string
-	password string
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }

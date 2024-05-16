@@ -41,7 +41,7 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res De
 		cnt++
 	}
 
-	row := s.conn.QueryRow(ctx, query, args)
+	row := s.conn.QueryRow(ctx, query, args...)
 	row.Scan(&res.Login, &res.PasswordHash, &res.Email, &res.Name, &res.Info)
 
 	return
@@ -51,7 +51,7 @@ func (s storage) UpdateUser(ctx context.Context, req *UpdateUserRequest) (err er
 	query := `UPDATE "user" SET login=$1, password_hash=$2, email=$3, name=$4, info=$5 WHERE id=$6`
 	args := []any{req.Login, req.PasswordHash, req.Email, req.Name, req.Info, req.Id}
 
-	_, err = s.conn.Exec(ctx, query, args)
+	_, err = s.conn.Exec(ctx, query, args...)
 
 	return
 }
@@ -60,7 +60,7 @@ func (s storage) AddNote(ctx context.Context, req *AddNoteRequest) (err error) {
 	query := `INSERT INTO note (user_id, name, data, public) VALUES ($1, $2, $3, $4)`
 	args := []any{req.UserId, req.Name, req.Data, req.Public}
 
-	_, err = s.conn.Exec(ctx, query, args)
+	_, err = s.conn.Exec(ctx, query, args...)
 
 	return
 }
@@ -69,7 +69,7 @@ func (s storage) UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err er
 	query := `UPDATE note SET name=$1, data=$2, public=$3 WHERE id=$4`
 	args := []any{req.Name, req.Data, req.Public, req.Id}
 
-	_, err = s.conn.Exec(ctx, query, args)
+	_, err = s.conn.Exec(ctx, query, args...)
 
 	return
 }
@@ -78,7 +78,7 @@ func (s storage) DetailNote(ctx context.Context, req *DetailNoteRequest) (res No
 	query := `SELECT id, name, data, public FROM note WHERE id=$1`
 	args := []any{req.Id}
 
-	row := s.conn.QueryRow(ctx, query, args)
+	row := s.conn.QueryRow(ctx, query, args...)
 	err = row.Scan(&res.Id, &res.Name, &res.Data, &res.Public)
 
 	return
@@ -88,7 +88,7 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 	query := `DELETE FROM note WHERE id=$1`
 	args := []any{req.Id}
 
-	_, err = s.conn.Exec(ctx, query, args)
+	_, err = s.conn.Exec(ctx, query, args...)
 
 	return
 }
@@ -97,7 +97,7 @@ func (s storage) ListNotes(ctx context.Context, req *ListNotesRequest) (res []No
 	query := `SELECT id, name, data, public FROM note WHERE user_id=$1 SKIP $2 LIMIT $3`
 	args := []any{req.UserId, req.Skip, req.Limit}
 
-	rows, err := s.conn.Query(ctx, query, args)
+	rows, err := s.conn.Query(ctx, query, args...)
 	for rows.Next() {
 		note := Note{}
 		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public)

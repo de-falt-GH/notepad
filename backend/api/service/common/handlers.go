@@ -19,20 +19,22 @@ func (s *service) postRegister(ctx *gin.Context) {
 		return
 	}
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.password), 15)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 15)
 	if err != nil {
+		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "password hashing failed"})
 		return
 	}
 
 	id, err := s.storage.CreateUser(ctx, &c_storage.CreateUserRequest{
-		Login:        req.login,
+		Login:        req.Login,
 		PasswordHash: string(passwordHash),
-		Email:        req.email,
-		Name:         req.name,
-		Info:         req.info,
+		Email:        req.Email,
+		Name:         req.Name,
+		Info:         req.Info,
 	})
 	if err != nil {
+		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "saving to db failed"})
 		return
 	}
@@ -43,6 +45,7 @@ func (s *service) postRegister(ctx *gin.Context) {
 	claims["uid"] = id
 	tokenString, err := token.SignedString(my_jwt.Salt)
 	if err != nil {
+		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "unable to generate token string: " + err.Error()})
 		return
 	}
@@ -53,12 +56,14 @@ func (s *service) postRegister(ctx *gin.Context) {
 func (s *service) postAuthorize(ctx *gin.Context) {
 	var req authorizeRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid format"})
 		return
 	}
 
-	user, err := s.storage.DetailUser(ctx, &c_storage.DetailUserRequest{Login: req.login})
-	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.password)) != nil {
+	user, err := s.storage.DetailUser(ctx, &c_storage.DetailUserRequest{Login: req.Login})
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)) != nil {
+		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -69,6 +74,7 @@ func (s *service) postAuthorize(ctx *gin.Context) {
 	claims["uid"] = user.Id
 	tokenString, err := token.SignedString(my_jwt.Salt)
 	if err != nil {
+		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "unable to generate token string: " + err.Error()})
 		return
 	}

@@ -30,7 +30,7 @@ func (s storage) CreateUser(ctx context.Context, req *CreateUserRequest) (id int
 		req.Info,
 	}
 
-	row := s.conn.QueryRow(ctx, query, args)
+	row := s.conn.QueryRow(ctx, query, args...)
 	err = row.Scan(&id)
 
 	return
@@ -49,7 +49,7 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res *D
 		cnt++
 	}
 
-	row := s.conn.QueryRow(ctx, query, args)
+	row := s.conn.QueryRow(ctx, query, args...)
 	row.Scan(&res.Id, &res.Login, &res.PasswordHash, &res.Email, &res.Name, &res.Info)
 
 	return
