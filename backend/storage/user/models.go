@@ -29,6 +29,10 @@ type AddNoteRequest struct {
 	Public bool
 }
 
+type AddNoteResponse struct {
+	NoteId int
+}
+
 type UpdateNoteRequest struct {
 	Id     int
 	Name   string

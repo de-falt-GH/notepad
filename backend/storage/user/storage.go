@@ -12,7 +12,7 @@ type Storage interface {
 	DetailUser(ctx context.Context, req *DetailUserRequest) (res DetailUserResponse, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest) (err error)
 
-	AddNote(ctx context.Context, req *AddNoteRequest) (err error)
+	AddNote(ctx context.Context, req *AddNoteRequest) (res AddNoteResponse, err error)
 	UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error)
 	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
 	DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err error)
@@ -31,7 +31,7 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res De
 
 	if req.Id != 0 {
 		query += " AND id=$" + strconv.Itoa(cnt)
-		args = append(args, req.Login)
+		args = append(args, req.Id)
 		cnt++
 	}
 
@@ -42,7 +42,7 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res De
 	}
 
 	row := s.conn.QueryRow(ctx, query, args...)
-	row.Scan(&res.Login, &res.PasswordHash, &res.Email, &res.Name, &res.Info)
+	err = row.Scan(&res.Login, &res.PasswordHash, &res.Email, &res.Name, &res.Info)
 
 	return
 }
@@ -51,16 +51,18 @@ func (s storage) UpdateUser(ctx context.Context, req *UpdateUserRequest) (err er
 	query := `UPDATE "user" SET login=$1, password_hash=$2, email=$3, name=$4, info=$5 WHERE id=$6`
 	args := []any{req.Login, req.PasswordHash, req.Email, req.Name, req.Info, req.Id}
 
+	s.log.Info(req.Login)
 	_, err = s.conn.Exec(ctx, query, args...)
 
 	return
 }
 
-func (s storage) AddNote(ctx context.Context, req *AddNoteRequest) (err error) {
-	query := `INSERT INTO note (user_id, name, data, public) VALUES ($1, $2, $3, $4)`
+func (s storage) AddNote(ctx context.Context, req *AddNoteRequest) (res AddNoteResponse, err error) {
+	query := `INSERT INTO note (user_id, name, data, public) VALUES ($1, $2, $3, $4) RETURNING id`
 	args := []any{req.UserId, req.Name, req.Data, req.Public}
 
-	_, err = s.conn.Exec(ctx, query, args...)
+	row := s.conn.QueryRow(ctx, query, args...)
+	err = row.Scan(&res.NoteId)
 
 	return
 }

@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (s service) DetailUser(ctx *gin.Context) {
@@ -25,6 +26,8 @@ func (s service) DetailUser(ctx *gin.Context) {
 		return
 	}
 
+	s.log.Info(id)
+
 	res := DetailUserResponse{
 		Login: user.Login,
 		Email: user.Email,
@@ -36,10 +39,38 @@ func (s service) DetailUser(ctx *gin.Context) {
 }
 
 func (s service) UpdateUser(ctx *gin.Context) {
+	tokenString := ctx.GetHeader("Authorization")
+	id, err := my_jwt.ExtractID(tokenString)
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "parsing jwt id failed"})
+		return
+	}
+
 	var req UpdateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		return
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 15)
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "password hashing failed"})
+		return
+	}
+
+	if err = s.storage.UpdateUser(ctx, &user_storage.UpdateUserRequest{
+		Id:           id,
+		Login:        req.Login,
+		PasswordHash: string(passwordHash),
+		Email:        req.Email,
+		Name:         req.Name,
+		Info:         req.Info,
+	}); err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusNotFound, gin.H{"error": "updating user failed"})
 		return
 	}
 
@@ -62,16 +93,19 @@ func (s service) AddNote(ctx *gin.Context) {
 		return
 	}
 
-	if err := s.storage.AddNote(ctx, &user_storage.AddNoteRequest{
+	res, err := s.storage.AddNote(ctx, &user_storage.AddNoteRequest{
 		UserId: id,
 		Name:   req.Name,
 		Data:   req.Data,
 		Public: req.Public,
-	}); err != nil {
+	})
+	if err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "adding note to db failed"})
 		return
 	}
+
+	ctx.IndentedJSON(http.StatusOK, gin.H{"noteId": res.NoteId})
 }
 
 func (s service) UpdateNote(ctx *gin.Context) {
