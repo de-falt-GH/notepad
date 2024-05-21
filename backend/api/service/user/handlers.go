@@ -132,7 +132,7 @@ func (s service) DetailNote(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		s.log.Error(err)
-		ctx.IndentedJSON(400, gin.H{"error": "invalid order id"})
+		ctx.IndentedJSON(400, gin.H{"error": "invalid note id"})
 		return
 	}
 
@@ -148,14 +148,14 @@ func (s service) DetailNote(ctx *gin.Context) {
 }
 
 func (s service) DeleteNote(ctx *gin.Context) {
-	var req DeleteNoteRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	noteId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
 		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		ctx.IndentedJSON(400, gin.H{"error": "invalid note id"})
 		return
 	}
 
-	err := s.storage.DeleteNote(ctx, &user_storage.DeleteNoteRequest{Id: req.Id})
+	err = s.storage.DeleteNote(ctx, &user_storage.DeleteNoteRequest{Id: noteId})
 	if err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "database request failed"})

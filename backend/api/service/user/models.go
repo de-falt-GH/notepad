@@ -33,14 +33,6 @@ type UpdateNoteRequest struct {
 	Public bool   `json:"public"`
 }
 
-type DetailNoteRequest struct {
-	Id int `json:"id"`
-}
-
-type DeleteNoteRequest struct {
-	Id int `json:"id"`
-}
-
 type ListNotesRequest struct {
 	Limit int `form:"limit"`
 	Skip  int `form:"skip"`
