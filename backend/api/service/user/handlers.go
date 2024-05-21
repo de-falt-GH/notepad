@@ -155,6 +155,13 @@ func (s service) DeleteNote(ctx *gin.Context) {
 		return
 	}
 
+	err := s.storage.DeleteNote(ctx, &user_storage.DeleteNoteRequest{Id: req.Id})
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "database request failed"})
+		return
+	}
+
 	ctx.IndentedJSON(http.StatusOK, gin.H{"msg": "note deleted successfully"})
 }
 

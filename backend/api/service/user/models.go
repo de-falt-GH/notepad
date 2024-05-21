@@ -38,7 +38,7 @@ type DetailNoteRequest struct {
 }
 
 type DeleteNoteRequest struct {
-	Id string `json:"id"`
+	Id int `json:"id"`
 }
 
 type ListNotesRequest struct {
