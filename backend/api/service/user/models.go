@@ -33,7 +33,27 @@ type UpdateNoteRequest struct {
 	Public bool   `json:"public"`
 }
 
+type DetailNoteResponse struct {
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Data   string `json:"data"`
+	Public bool   `json:"public"`
+}
+
 type ListNotesRequest struct {
 	Limit int `form:"limit"`
 	Skip  int `form:"skip"`
+}
+
+type NoteListItem struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type ListPublicNotesResponse struct {
+	Notes []NoteListItem `json:"notes"`
+}
+
+type ListPrivateNotesResponse struct {
+	Notes []NoteListItem `json:"notes"`
 }

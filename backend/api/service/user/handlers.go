@@ -136,6 +136,8 @@ func (s service) DetailNote(ctx *gin.Context) {
 		return
 	}
 
+	// TODO: check that you own the note, lol
+
 	if res, err := s.storage.DetailNote(ctx, &user_storage.DetailNoteRequest{
 		Id: id,
 	}); err != nil {
@@ -143,7 +145,12 @@ func (s service) DetailNote(ctx *gin.Context) {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "updating note failed failed"})
 		return
 	} else {
-		ctx.IndentedJSON(http.StatusOK, res)
+		ctx.IndentedJSON(http.StatusOK, DetailNoteResponse{
+			Id: res.Id,
+			Name: res.Name,
+			Data: res.Data,
+			Public: res.Public,
+		})
 	}
 }
 
@@ -182,7 +189,13 @@ func (s service) ListPublicNotes(ctx *gin.Context) {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
 		return
 	} else {
-		ctx.IndentedJSON(http.StatusOK, res)
+		notes := []NoteListItem{}
+
+		for _, note := range res {
+			notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
+		}
+
+		ctx.IndentedJSON(http.StatusOK, ListPublicNotesResponse{Notes: notes})
 	}
 }
 
@@ -212,6 +225,12 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
 		return
 	} else {
-		ctx.IndentedJSON(http.StatusOK, res)
+		notes := []NoteListItem{}
+
+		for _, note := range res {
+			notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
+		}
+
+		ctx.IndentedJSON(http.StatusOK, ListPrivateNotesResponse{Notes: notes})
 	}
 }
