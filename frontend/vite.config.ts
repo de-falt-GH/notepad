@@ -11,8 +11,6 @@ const config: UserConfigFn = ({ mode }) => {
 
 	const backendPort = backendPortEnvFile ?? backendPortFromProcess
 
-	console.log({ backendPort })
-
 	return defineConfig({
 		plugins: [sveltekit()],
 
