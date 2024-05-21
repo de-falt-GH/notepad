@@ -196,7 +196,7 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 	}
 
 	tokenString := ctx.GetHeader("Authorization")
-	id, err := my_jwt.ExtractID(tokenString)
+	userId, err := my_jwt.ExtractID(tokenString)
 	if err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "parsing jwt id failed"})
@@ -204,7 +204,7 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 	}
 
 	if res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListNotesRequest{
-		UserId: id,
+		UserId: userId,
 		Skip:   req.Skip,
 		Limit:  req.Limit,
 	}); err != nil {
