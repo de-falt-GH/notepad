@@ -16,7 +16,8 @@ type Storage interface {
 	UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error)
 	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
 	DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err error)
-	ListNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error)
+	ListPrivateNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error)
+	ListPublicNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error)
 }
 
 type storage struct {
@@ -95,20 +96,36 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 	return
 }
 
-func (s storage) ListNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error) {
-	query := `SELECT id, name, data, public FROM note WHERE 1=1`
-	args := []any{}
-
-	if req.Public {
-		query += " AND public=$1"
-		args = append(args, req.Public)
-	} else {
-		query += " AND user_id=$1"
-		args = append(args, req.UserId)
-	}
+func (s storage) ListPrivateNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error) {
+	query := `SELECT id, name, data, public FROM note WHERE user_id=$1`
+	args := []any{req.UserId}
 
 	if req.Skip != 0 {
 		query += " SKIP $2"
+		args = append(args, req.Skip)
+	}
+
+	if req.Limit != 0 {
+		query += " LIMIT $3"
+		args = append(args, req.Limit)
+	}
+
+	rows, err := s.conn.Query(ctx, query, args...)
+	for rows.Next() {
+		note := Note{}
+		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public)
+		res = append(res, note)
+	}
+
+	return
+}
+
+func (s storage) ListPublicNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error) {
+	query := `SELECT id, name, data, public FROM note WHERE public=true`
+	args := []any{}
+
+	if req.Skip != 0 {
+		query += " SKIP $1"
 		args = append(args, req.Skip)
 	}
 

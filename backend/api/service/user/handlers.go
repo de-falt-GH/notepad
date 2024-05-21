@@ -165,7 +165,36 @@ func (s service) DeleteNote(ctx *gin.Context) {
 	ctx.IndentedJSON(http.StatusOK, gin.H{"msg": "note deleted successfully"})
 }
 
-func (s service) ListNotes(ctx *gin.Context) {
+func (s service) ListPublicNotes(ctx *gin.Context) {
+	var req ListNotesRequest
+	err := ctx.BindQuery(&req)
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		return
+	}
+
+	if res, err := s.storage.ListPublicNotes(ctx, &user_storage.ListNotesRequest{
+		Skip:  req.skip,
+		Limit: req.limit,
+	}); err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		return
+	} else {
+		ctx.IndentedJSON(http.StatusOK, res)
+	}
+}
+
+func (s service) ListPrivateNotes(ctx *gin.Context) {
+	var req ListNotesRequest
+	err := ctx.BindQuery(&req)
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		return
+	}
+
 	tokenString := ctx.GetHeader("Authorization")
 	id, err := my_jwt.ExtractID(tokenString)
 	if err != nil {
@@ -174,15 +203,10 @@ func (s service) ListNotes(ctx *gin.Context) {
 		return
 	}
 
-	skip, _ := strconv.Atoi(ctx.Query("skip"))
-	limit, _ := strconv.Atoi(ctx.Query("limit"))
-	public, _ := strconv.ParseBool(ctx.Query("public"))
-
-	if res, err := s.storage.ListNotes(ctx, &user_storage.ListNotesRequest{
+	if res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListNotesRequest{
 		UserId: id,
-		Skip:   skip,
-		Limit:  limit,
-		Public: public,
+		Skip:   req.skip,
+		Limit:  req.limit,
 	}); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})

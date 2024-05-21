@@ -42,7 +42,6 @@ type DeleteNoteRequest struct {
 }
 
 type ListNotesRequest struct {
-	limit  int  `json:"limit"`
-	skip   int  `json:"skip"`
-	public bool `json:"public"`
+	limit int `json:"limit"`
+	skip  int `json:"skip"`
 }
