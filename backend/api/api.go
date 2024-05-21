@@ -33,5 +33,5 @@ func Serve(commonStorage commonStorage.Storage, userStorage userStorage.Storage,
 	commonService.SetRoutes(router.Group(""))
 	userService.SetRoutes(router.Group(""))
 
-	router.Run(os.Getenv("BACKEND_HOST") + ":" + os.Getenv("BACKEND_PORT"))
+	router.Run(":" + os.Getenv("BACKEND_PORT"))
 }

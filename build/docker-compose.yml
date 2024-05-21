@@ -9,7 +9,6 @@ services:
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
-      BACKEND_HOST: ${BACKEND_HOST}
       BACKEND_PORT: ${BACKEND_PORT}
       POSTGRES_HOST: db
       POSTGRES_PORT: ${POSTGRES_PORT}
