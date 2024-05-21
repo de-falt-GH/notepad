@@ -175,8 +175,8 @@ func (s service) ListPublicNotes(ctx *gin.Context) {
 	}
 
 	if res, err := s.storage.ListPublicNotes(ctx, &user_storage.ListNotesRequest{
-		Skip:  req.skip,
-		Limit: req.limit,
+		Skip:  req.Skip,
+		Limit: req.Limit,
 	}); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
@@ -205,8 +205,8 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 
 	if res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListNotesRequest{
 		UserId: id,
-		Skip:   req.skip,
-		Limit:  req.limit,
+		Skip:   req.Skip,
+		Limit:  req.Limit,
 	}); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
