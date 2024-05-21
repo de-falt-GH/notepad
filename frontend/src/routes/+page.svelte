@@ -1,26 +1,19 @@
 <script>
-	import { Button } from '$lib/components/ui/button'
-	import { authToken } from '$lib/auth'
-	import { apiClient } from '$lib/api'
-
-	function onRegister() {
-		apiClient
-			.register({
-				login: 'picalines',
-				password: '12345',
-				email: 'f@off.com',
-				name: 'petya',
-				info: 'not much',
-			})
-			.then(console.log)
-	}
-
-	function onLogin() {
-		apiClient.authenticate('123', '123').then(console.log)
-	}
+	import { buttonVariants } from '@/lib/components/ui/button'
 </script>
 
-Auth token: {$authToken}
+<main class="flex h-[100svh] w-full flex-col items-center">
+	<div
+		class="relative flex h-[400px] flex-col items-center justify-center gap-2"
+	>
+		<div class="text-lg font-bold">notepad</div>
+		<div class="italic">you note - we pad</div>
+	</div>
 
-<Button variant="outline" on:click={onRegister}>Register</Button>
-<Button variant="outline" on:click={onLogin}>Login</Button>
+	<a
+		class={buttonVariants({ variant: 'outline', class: 'w-min' })}
+		href="/explore"
+	>
+		Explore
+	</a>
+</main>

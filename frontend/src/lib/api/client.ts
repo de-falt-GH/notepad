@@ -4,7 +4,7 @@ import { authToken } from '../auth'
 
 declare const __BACKEND_PORT__: string
 
-const apiBaseUrl = new URL(location.toString())
+const apiBaseUrl = new URL(location.origin)
 apiBaseUrl.port = __BACKEND_PORT__
 
 const axiosInstance = axios.create({ baseURL: apiBaseUrl.toString() })
@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use(request => {
 	const currentToken = get(authToken)
 
 	if (currentToken) {
-		request.headers['Authorization'] = `Bearer ${currentToken}`
+		request.headers['Authorization'] = currentToken
 	}
 
 	return request
@@ -32,7 +32,18 @@ export const apiClient = {
 		console.log(await axiosInstance.post('/register', params))
 	},
 
-	async authenticate(login: string, password: string) {
-		console.log(await axiosInstance.post('/login', { login, password }))
+	async authenticate(
+		login: string,
+		password: string,
+	): Promise<string | null> {
+		try {
+			const {
+				data: { token },
+			} = await axiosInstance.post('/login', { login, password })
+
+			return token
+		} catch {
+			return null
+		}
 	},
-} as const
+}
