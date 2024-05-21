@@ -49,10 +49,10 @@ type DeleteNoteRequest struct {
 }
 
 type ListNotesRequest struct {
-	UserId   int
-	Skip     int
-	Limit    int
-	Personal bool
+	UserId int
+	Skip   int
+	Limit  int
+	Public bool
 }
 
 type Note struct {

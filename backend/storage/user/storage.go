@@ -96,8 +96,26 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 }
 
 func (s storage) ListNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error) {
-	query := `SELECT id, name, data, public FROM note WHERE user_id=$1 SKIP $2 LIMIT $3`
-	args := []any{req.UserId, req.Skip, req.Limit}
+	query := `SELECT id, name, data, public FROM note WHERE 1=1`
+	args := []any{}
+
+	if req.Public {
+		query += " AND public=$1"
+		args = append(args, req.Public)
+	} else {
+		query += " AND user_id=$1"
+		args = append(args, req.UserId)
+	}
+
+	if req.Skip != 0 {
+		query += " SKIP $2"
+		args = append(args, req.Skip)
+	}
+
+	if req.Limit != 0 {
+		query += " LIMIT $2"
+		args = append(args, req.Limit)
+	}
 
 	rows, err := s.conn.Query(ctx, query, args...)
 	for rows.Next() {

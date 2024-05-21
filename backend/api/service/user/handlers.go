@@ -182,10 +182,10 @@ func (s service) ListNotes(ctx *gin.Context) {
 	}
 
 	if res, err := s.storage.ListNotes(ctx, &user_storage.ListNotesRequest{
-		UserId:   id,
-		Skip:     req.skip,
-		Limit:    req.limit,
-		Personal: req.personal,
+		UserId: id,
+		Skip:   req.skip,
+		Limit:  req.limit,
+		Public: req.public,
 	}); err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
