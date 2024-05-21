@@ -64,7 +64,7 @@ func (s *service) postAuthorize(ctx *gin.Context) {
 	user, err := s.storage.DetailUser(ctx, &c_storage.DetailUserRequest{Login: req.Login})
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)) != nil {
 		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid credentials"})
+		ctx.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
@@ -75,7 +75,7 @@ func (s *service) postAuthorize(ctx *gin.Context) {
 	tokenString, err := token.SignedString(my_jwt.Salt)
 	if err != nil {
 		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "unable to generate token string: " + err.Error()})
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "unable to generate token string: " + err.Error()})
 		return
 	}
 
