@@ -24,7 +24,7 @@ func (s *service) SetRoutes(rg *gin.RouterGroup) {
 	user.POST("/note", s.AddNote)
 	user.PUT("/note", s.UpdateNote)
 	user.DELETE("/note", s.DeleteNote)
-	user.POST("/note/list", s.ListNotes)
+	user.GET("/note/list", s.ListNotes)
 
 }
 
