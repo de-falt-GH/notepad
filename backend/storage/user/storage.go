@@ -77,7 +77,7 @@ func (s storage) UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err er
 }
 
 func (s storage) DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error) {
-	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.author_id=u.id WHERE n.id=$1`
+	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.id=$1`
 	args := []any{req.Id}
 
 	row := s.conn.QueryRow(ctx, query, args...)
@@ -96,7 +96,7 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 }
 
 func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error) {
-	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.author_id=u.id WHERE n.author_id=$1`
+	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.user_id=$1 ORDER BY n.updated DESC`
 	args := []any{req.UserId}
 	cnt := 2
 

@@ -57,7 +57,7 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res *D
 }
 
 func (s storage) ListPublicNotes(ctx context.Context, req *ListPublicNotesRequest) (res []Note, err error) {
-	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.author_id=u.id WHERE n.public=true`
+	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.public=true ORDER BY n.updated DESC`
 	args := []any{}
 	cnt := 1
 
