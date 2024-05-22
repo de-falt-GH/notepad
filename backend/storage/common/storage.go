@@ -16,7 +16,7 @@ type Storage interface {
 
 type storage struct {
 	Storage
-	conn *pgxpool.Conn
+	conn *pgxpool.Pool
 	log  *zap.SugaredLogger
 }
 
@@ -89,6 +89,6 @@ func (s storage) ListPublicNotes(ctx context.Context, req *ListPublicNotesReques
 	return
 }
 
-func NewStorage(conn *pgxpool.Conn, log *zap.SugaredLogger) *storage {
+func NewStorage(conn *pgxpool.Pool, log *zap.SugaredLogger) *storage {
 	return &storage{conn: conn, log: log}
 }
