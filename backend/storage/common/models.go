@@ -29,3 +29,16 @@ type UpdateUserRequest struct {
 	Name         string
 	Info         string
 }
+
+type ListPublicNotesRequest struct {
+	Search string
+	Skip   int
+	Limit  int
+}
+
+type Note struct {
+	Id     int
+	Name   string
+	Data   string
+	Public bool
+}

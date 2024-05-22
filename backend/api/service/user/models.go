@@ -51,10 +51,6 @@ type NoteListItem struct {
 	Name string `json:"name"`
 }
 
-type ListPublicNotesResponse struct {
-	Notes []NoteListItem `json:"notes"`
-}
-
 type ListPrivateNotesResponse struct {
 	Notes []NoteListItem `json:"notes"`
 }

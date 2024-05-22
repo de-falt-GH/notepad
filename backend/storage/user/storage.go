@@ -16,8 +16,7 @@ type Storage interface {
 	UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error)
 	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
 	DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err error)
-	ListPrivateNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error)
-	ListPublicNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error)
+	ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error)
 }
 
 type storage struct {
@@ -96,12 +95,12 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 	return
 }
 
-func (s storage) ListPrivateNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error) {
+func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error) {
 	query := `SELECT id, name, data, public FROM note WHERE user_id=$1`
 	args := []any{req.UserId}
 
 	if req.Search != "" {
-		query += "AND name LIKE '%' || $2 || '%'"
+		query += " AND name LIKE '%' || $2 || '%'"
 		args = append(args, req.Search)
 	}
 
@@ -112,35 +111,6 @@ func (s storage) ListPrivateNotes(ctx context.Context, req *ListNotesRequest) (r
 
 	if req.Limit != 0 {
 		query += " LIMIT $4"
-		args = append(args, req.Limit)
-	}
-
-	rows, err := s.conn.Query(ctx, query, args...)
-	for rows.Next() {
-		note := Note{}
-		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public)
-		res = append(res, note)
-	}
-
-	return
-}
-
-func (s storage) ListPublicNotes(ctx context.Context, req *ListNotesRequest) (res []Note, err error) {
-	query := `SELECT id, name, data, public FROM note WHERE public=true`
-	args := []any{}
-
-	if req.Search != "" {
-		query += "AND name LIKE '%' || $1 || '%'"
-		args = append(args, req.Search)
-	}
-
-	if req.Skip != 0 {
-		query += " SKIP $2"
-		args = append(args, req.Skip)
-	}
-
-	if req.Limit != 0 {
-		query += " LIMIT $3"
 		args = append(args, req.Limit)
 	}
 

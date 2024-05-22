@@ -11,6 +11,7 @@ import (
 type Storage interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest) (id int, err error)
 	DetailUser(ctx context.Context, req *DetailUserRequest) (res *DetailUserResponse, err error)
+	ListPublicNotes(ctx context.Context, req *ListPublicNotesRequest) (res []Note, err error)
 }
 
 type storage struct {
@@ -51,6 +52,35 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res *D
 
 	row := s.conn.QueryRow(ctx, query, args...)
 	row.Scan(&res.Id, &res.Login, &res.PasswordHash, &res.Email, &res.Name, &res.Info)
+
+	return
+}
+
+func (s storage) ListPublicNotes(ctx context.Context, req *ListPublicNotesRequest) (res []Note, err error) {
+	query := `SELECT id, name, data, public FROM note WHERE public=true`
+	args := []any{}
+
+	if req.Search != "" {
+		query += " AND name LIKE '%' || $1 || '%'"
+		args = append(args, req.Search)
+	}
+
+	if req.Skip != 0 {
+		query += " SKIP $2"
+		args = append(args, req.Skip)
+	}
+
+	if req.Limit != 0 {
+		query += " LIMIT $3"
+		args = append(args, req.Limit)
+	}
+
+	rows, err := s.conn.Query(ctx, query, args...)
+	for rows.Next() {
+		note := Note{}
+		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public)
+		res = append(res, note)
+	}
 
 	return
 }

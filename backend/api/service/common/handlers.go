@@ -81,3 +81,31 @@ func (s *service) postAuthorize(ctx *gin.Context) {
 
 	ctx.IndentedJSON(http.StatusOK, gin.H{"token": tokenString})
 }
+
+func (s service) ListPublicNotes(ctx *gin.Context) {
+	var req ListNotesRequest
+	err := ctx.BindQuery(&req)
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		return
+	}
+
+	if res, err := s.storage.ListPublicNotes(ctx, &c_storage.ListPublicNotesRequest{
+		Search: req.Search,
+		Skip:   req.Skip,
+		Limit:  req.Limit,
+	}); err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
+		return
+	} else {
+		notes := []NoteListItem{}
+
+		for _, note := range res {
+			notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
+		}
+
+		ctx.IndentedJSON(http.StatusOK, ListPublicNotesResponse{Notes: notes})
+	}
+}

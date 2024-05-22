@@ -172,34 +172,6 @@ func (s service) DeleteNote(ctx *gin.Context) {
 	ctx.IndentedJSON(http.StatusOK, gin.H{"msg": "note deleted successfully"})
 }
 
-func (s service) ListPublicNotes(ctx *gin.Context) {
-	var req ListNotesRequest
-	err := ctx.BindQuery(&req)
-	if err != nil {
-		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
-		return
-	}
-
-	if res, err := s.storage.ListPublicNotes(ctx, &user_storage.ListNotesRequest{
-		Search: req.Search,
-		Skip:   req.Skip,
-		Limit:  req.Limit,
-	}); err != nil {
-		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
-		return
-	} else {
-		notes := []NoteListItem{}
-
-		for _, note := range res {
-			notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
-		}
-
-		ctx.IndentedJSON(http.StatusOK, ListPublicNotesResponse{Notes: notes})
-	}
-}
-
 func (s service) ListPrivateNotes(ctx *gin.Context) {
 	var req ListNotesRequest
 	err := ctx.BindQuery(&req)
@@ -217,7 +189,7 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 		return
 	}
 
-	if res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListNotesRequest{
+	if res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListPrivateNotesRequest{
 		UserId: userId,
 		Search: req.Search,
 		Skip:   req.Skip,

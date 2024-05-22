@@ -20,8 +20,7 @@ func (s *service) SetRoutes(rg *gin.RouterGroup) {
 	user.GET("/profile", s.DetailUser)
 	user.POST("/profile", s.UpdateUser)
 
-	user.GET("/notes", s.ListPrivateNotes)
-	user.GET("/notes/public", s.ListPublicNotes)
+	user.GET("/notes/private", s.ListPrivateNotes)
 	user.POST("/notes", s.AddNote)
 	user.GET("/notes/:id", s.DetailNote)
 	user.PUT("/notes/:id", s.UpdateNote)

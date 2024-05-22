@@ -48,7 +48,7 @@ type DeleteNoteRequest struct {
 	Id int
 }
 
-type ListNotesRequest struct {
+type ListPrivateNotesRequest struct {
 	UserId int
 	Search string
 	Skip   int
