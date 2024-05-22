@@ -189,22 +189,23 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 		return
 	}
 
-	if res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListPrivateNotesRequest{
+	res, err := s.storage.ListPrivateNotes(ctx, &user_storage.ListPrivateNotesRequest{
 		UserId: userId,
 		Search: req.Search,
 		Skip:   req.Skip,
 		Limit:  req.Limit,
-	}); err != nil {
+	})
+	if err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
 		return
-	} else {
-		notes := []NoteListItem{}
-
-		for _, note := range res {
-			notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
-		}
-
-		ctx.IndentedJSON(http.StatusOK, ListPrivateNotesResponse{Notes: notes})
 	}
+
+	notes := []NoteListItem{}
+	for _, note := range res {
+		notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
+	}
+
+	ctx.IndentedJSON(http.StatusOK, ListPrivateNotesResponse{Notes: notes})
+
 }

@@ -91,21 +91,21 @@ func (s service) ListPublicNotes(ctx *gin.Context) {
 		return
 	}
 
-	if res, err := s.storage.ListPublicNotes(ctx, &c_storage.ListPublicNotesRequest{
+	res, err := s.storage.ListPublicNotes(ctx, &c_storage.ListPublicNotesRequest{
 		Search: req.Search,
 		Skip:   req.Skip,
 		Limit:  req.Limit,
-	}); err != nil {
+	})
+	if err != nil {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid request format"})
 		return
-	} else {
-		notes := []NoteListItem{}
-
-		for _, note := range res {
-			notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
-		}
-
-		ctx.IndentedJSON(http.StatusOK, ListPublicNotesResponse{Notes: notes})
 	}
+
+	notes := []NoteListItem{}
+	for _, note := range res {
+		notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
+	}
+
+	ctx.IndentedJSON(http.StatusOK, ListPublicNotesResponse{Notes: notes})
 }
