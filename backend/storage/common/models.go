@@ -1,5 +1,7 @@
 package common
 
+import "time"
+
 type CreateUserRequest struct {
 	Login        string
 	PasswordHash string
@@ -37,8 +39,11 @@ type ListPublicNotesRequest struct {
 }
 
 type Note struct {
-	Id     int
-	Name   string
-	Data   string
-	Public bool
+	Id         int
+	Name       string
+	Data       string
+	Public     bool
+	Created    time.Time
+	Updated    time.Time
+	AuthorName string
 }

@@ -1,5 +1,7 @@
 package user
 
+import "time"
+
 type DetailUserRequest struct {
 	Id    int
 	Login string
@@ -56,8 +58,11 @@ type ListPrivateNotesRequest struct {
 }
 
 type Note struct {
-	Id     int
-	Name   string
-	Data   string
-	Public bool
+	Id         int
+	Name       string
+	Data       string
+	Public     bool
+	Created    time.Time
+	Updated    time.Time
+	AuthorName string
 }

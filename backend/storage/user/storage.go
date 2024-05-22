@@ -58,7 +58,7 @@ func (s storage) UpdateUser(ctx context.Context, req *UpdateUserRequest) (err er
 }
 
 func (s storage) AddNote(ctx context.Context, req *AddNoteRequest) (res AddNoteResponse, err error) {
-	query := `INSERT INTO note (user_id, name, data, public) VALUES ($1, $2, $3, $4) RETURNING id`
+	query := `INSERT INTO note (user_id, name, data, public, created, updated) VALUES ($1, $2, $3, $4, NOW(), NOW()) RETURNING id`
 	args := []any{req.UserId, req.Name, req.Data, req.Public}
 
 	row := s.conn.QueryRow(ctx, query, args...)
@@ -68,7 +68,7 @@ func (s storage) AddNote(ctx context.Context, req *AddNoteRequest) (res AddNoteR
 }
 
 func (s storage) UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error) {
-	query := `UPDATE note SET name=$1, data=$2, public=$3 WHERE id=$4`
+	query := `UPDATE note SET name=$1, data=$2, public=$3, updated=NOW() WHERE id=$4`
 	args := []any{req.Name, req.Data, req.Public, req.Id}
 
 	_, err = s.conn.Exec(ctx, query, args...)
@@ -77,7 +77,7 @@ func (s storage) UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err er
 }
 
 func (s storage) DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error) {
-	query := `SELECT id, name, data, public FROM note WHERE id=$1`
+	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.author_id=u.id WHERE n.id=$1`
 	args := []any{req.Id}
 
 	row := s.conn.QueryRow(ctx, query, args...)
@@ -96,7 +96,7 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 }
 
 func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error) {
-	query := `SELECT id, name, data, public FROM note WHERE user_id=$1`
+	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.author_id=u.id WHERE n.author_id=$1`
 	args := []any{req.UserId}
 	cnt := 2
 
@@ -121,7 +121,7 @@ func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequ
 	rows, err := s.conn.Query(ctx, query, args...)
 	for rows.Next() {
 		note := Note{}
-		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public)
+		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public, &note.Updated, &note.AuthorName)
 		res = append(res, note)
 	}
 
