@@ -1,5 +1,7 @@
 package common
 
+import "time"
+
 type registerRequest struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
@@ -20,8 +22,10 @@ type ListNotesRequest struct {
 }
 
 type NoteListItem struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id         int       `json:"id"`
+	Name       string    `json:"name"`
+	AuthorName string    `json:"author_name"`
+	Updated    time.Time `json:"updated"`
 }
 
 type ListPublicNotesResponse struct {

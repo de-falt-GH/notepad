@@ -203,7 +203,7 @@ func (s service) ListPrivateNotes(ctx *gin.Context) {
 
 	notes := []NoteListItem{}
 	for _, note := range res {
-		notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name})
+		notes = append(notes, NoteListItem{Id: note.Id, Name: note.Name, AuthorName: note.AuthorName, Updated: note.Updated})
 	}
 
 	ctx.IndentedJSON(http.StatusOK, ListPrivateNotesResponse{Notes: notes})

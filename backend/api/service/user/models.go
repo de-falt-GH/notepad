@@ -1,5 +1,7 @@
 package user
 
+import "time"
+
 type DetailUserRequest struct {
 	Id int `json:"id"`
 }
@@ -47,8 +49,10 @@ type ListNotesRequest struct {
 }
 
 type NoteListItem struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id         int       `json:"id"`
+	Name       string    `json:"name"`
+	AuthorName string    `json:"author_name"`
+	Updated    time.Time `json:"updated"`
 }
 
 type ListPrivateNotesResponse struct {
