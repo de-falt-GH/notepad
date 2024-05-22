@@ -6,6 +6,7 @@
 	import { apiClient } from '@/lib/api'
 	import { authToken } from '@/lib/auth'
 	import { goto } from '$app/navigation'
+	import { Loader2Icon } from 'lucide-svelte'
 
 	let submitting = false
 	let login = ''
@@ -31,9 +32,11 @@
 </script>
 
 <form on:submit={onSubmit}>
-	<Card.Root>
+	<Card.Root
+		class="border-none outline outline-8 outline-yellow-300 drop-shadow-lg"
+	>
 		<Card.Header>
-			<Card.Title>Login</Card.Title>
+			<Card.Title class="text-xl font-bold">Login</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-4">
 			<div class="space-y-2">
@@ -66,7 +69,7 @@
 				disabled={submitting}
 			>
 				{#if submitting}
-					...
+					<Loader2Icon class="animate-spin" />
 				{:else}
 					Login
 				{/if}

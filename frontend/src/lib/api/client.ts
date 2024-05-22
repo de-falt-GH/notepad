@@ -27,6 +27,26 @@ type RegisterParameters = {
 	info: string
 }
 
+type Profile = {
+	login: string
+	email: string
+	name: string
+	info: string
+}
+
+type NoteFeedItem = {
+	id: number
+	name: string
+	author_name: string // TODO: лень под camelCase переделать
+	updated: string
+}
+
+type FetchNotesParameters = {
+	search?: string
+	limit?: number
+	skip?: number
+}
+
 export const apiClient = {
 	async register(params: RegisterParameters) {
 		console.log(await axiosInstance.post('/register', params))
@@ -45,5 +65,23 @@ export const apiClient = {
 		} catch {
 			return null
 		}
+	},
+
+	async fetchProfile(): Promise<Profile> {
+		const { data: profile } = await axiosInstance.get('/profile')
+		return profile
+	},
+
+	async fetchPublicNotes({
+		search = '',
+		limit = 20,
+		skip = 0,
+	}: FetchNotesParameters = {}): Promise<{ notes: NoteFeedItem[] }> {
+		const {
+			data: { notes },
+		} = await axiosInstance.get('/notes/public', {
+			params: { search, limit, skip },
+		})
+		return { notes }
 	},
 }
