@@ -17,6 +17,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      lucide-svelte:
+        specifier: ^0.379.0
+        version: 0.379.0(svelte@4.2.16)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1172,6 +1175,11 @@ packages:
   lru-cache@10.2.2:
     resolution: {integrity: sha512-9hp3Vp2/hFQUiIwKo8XCeFVnrg8Pk3TYNPIR7tJADKi5YfcF7vEaK7avFHTlSy3kOKYaJQaalfEo6YuXdceBOQ==}
     engines: {node: 14 || >=16.14}
+
+  lucide-svelte@0.379.0:
+    resolution: {integrity: sha512-KnlxrmVJlzFDHNA2oOAvD/g2a5zYMtUsQ7g7A3b5m5Q7prwu+tuVm0MQ6SI7NwPfFZh6bkCnQ0freBOGI/9MiA==}
+    peerDependencies:
+      svelte: ^3 || ^4 || ^5.0.0-next.42
 
   magic-string@0.30.10:
     resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
@@ -2874,6 +2882,10 @@ snapshots:
   lodash@4.17.21: {}
 
   lru-cache@10.2.2: {}
+
+  lucide-svelte@0.379.0(svelte@4.2.16):
+    dependencies:
+      svelte: 4.2.16
 
   magic-string@0.30.10:
     dependencies:
