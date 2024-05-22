@@ -100,13 +100,18 @@ func (s storage) ListPrivateNotes(ctx context.Context, req *ListNotesRequest) (r
 	query := `SELECT id, name, data, public FROM note WHERE user_id=$1`
 	args := []any{req.UserId}
 
+	if req.Search != "" {
+		query += "AND name LIKE '%' || $2 || '%'"
+		args = append(args, req.Search)
+	}
+
 	if req.Skip != 0 {
-		query += " SKIP $2"
+		query += " SKIP $3"
 		args = append(args, req.Skip)
 	}
 
 	if req.Limit != 0 {
-		query += " LIMIT $3"
+		query += " LIMIT $4"
 		args = append(args, req.Limit)
 	}
 
@@ -124,13 +129,18 @@ func (s storage) ListPublicNotes(ctx context.Context, req *ListNotesRequest) (re
 	query := `SELECT id, name, data, public FROM note WHERE public=true`
 	args := []any{}
 
+	if req.Search != "" {
+		query += "AND name LIKE '%' || $1 || '%'"
+		args = append(args, req.Search)
+	}
+
 	if req.Skip != 0 {
-		query += " SKIP $1"
+		query += " SKIP $2"
 		args = append(args, req.Skip)
 	}
 
 	if req.Limit != 0 {
-		query += " LIMIT $2"
+		query += " LIMIT $3"
 		args = append(args, req.Limit)
 	}
 

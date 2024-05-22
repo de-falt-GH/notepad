@@ -41,8 +41,9 @@ type DetailNoteResponse struct {
 }
 
 type ListNotesRequest struct {
-	Limit int `form:"limit"`
-	Skip  int `form:"skip"`
+	Search string `form:"search"`
+	Limit  int    `form:"limit"`
+	Skip   int    `form:"skip"`
 }
 
 type NoteListItem struct {

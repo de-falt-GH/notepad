@@ -50,6 +50,7 @@ type DeleteNoteRequest struct {
 
 type ListNotesRequest struct {
 	UserId int
+	Search string
 	Skip   int
 	Limit  int
 }
