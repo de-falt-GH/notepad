@@ -59,20 +59,24 @@ func (s storage) DetailUser(ctx context.Context, req *DetailUserRequest) (res *D
 func (s storage) ListPublicNotes(ctx context.Context, req *ListPublicNotesRequest) (res []Note, err error) {
 	query := `SELECT id, name, data, public FROM note WHERE public=true`
 	args := []any{}
+	cnt := 1
 
 	if req.Search != "" {
-		query += " AND name LIKE '%' || $1 || '%'"
+		query += " AND name LIKE '%' || $" + strconv.Itoa(cnt) + " || '%'"
 		args = append(args, req.Search)
+		cnt++
 	}
 
 	if req.Skip != 0 {
-		query += " SKIP $2"
+		query += " SKIP $" + strconv.Itoa(cnt)
 		args = append(args, req.Skip)
+		cnt++
 	}
 
 	if req.Limit != 0 {
-		query += " LIMIT $3"
+		query += " LIMIT $" + strconv.Itoa(cnt)
 		args = append(args, req.Limit)
+		cnt++
 	}
 
 	rows, err := s.conn.Query(ctx, query, args...)

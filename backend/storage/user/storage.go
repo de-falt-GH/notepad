@@ -98,20 +98,24 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error) {
 	query := `SELECT id, name, data, public FROM note WHERE user_id=$1`
 	args := []any{req.UserId}
+	cnt := 2
 
 	if req.Search != "" {
-		query += " AND name LIKE '%' || $2 || '%'"
+		query += " AND name LIKE '%' || $" + strconv.Itoa(cnt) + " || '%'"
 		args = append(args, req.Search)
+		cnt++
 	}
 
 	if req.Skip != 0 {
-		query += " SKIP $3"
+		query += " SKIP $" + strconv.Itoa(cnt)
 		args = append(args, req.Skip)
+		cnt++
 	}
 
 	if req.Limit != 0 {
-		query += " LIMIT $4"
+		query += " LIMIT $" + strconv.Itoa(cnt)
 		args = append(args, req.Limit)
+		cnt++
 	}
 
 	rows, err := s.conn.Query(ctx, query, args...)
