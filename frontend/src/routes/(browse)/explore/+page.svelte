@@ -5,7 +5,8 @@
 	import type { NoteFeedItem } from '@/lib/api/client'
 	import NoteLink from './NoteLink.svelte'
 	import type { ComponentProps } from 'svelte'
-	import { buttonVariants } from '@/lib/components/ui/button'
+	import { Button } from '@/lib/components/ui/button'
+	import { goto } from '$app/navigation'
 
 	type NoteLinkData = ComponentProps<NoteLink>
 
@@ -27,17 +28,26 @@
 					.fetchPrivateNotes()
 					.then(({ notes }) => notes.map(mapToLinkData))
 			: null
+
+	const onCreateClick = async () => {
+		const noteId = await apiClient.createNote({
+			name: 'Untitled',
+			data: '# Untitled\n\n',
+			public: false,
+		})
+
+		if (noteId !== null) {
+			await goto(`notes/${noteId}`)
+		}
+	}
 </script>
 
 {#if privateNotes !== null}
 	<h1 class="flex items-center gap-2 text-lg font-bold">
 		<span>My Notes</span>
-		<a
-			href="notes/new"
-			class={buttonVariants({ variant: 'outline', class: 'h-6 w-6 p-1' })}
-		>
+		<Button variant="outline" class="h-6 w-6 p-1" on:click={onCreateClick}>
 			<PencilIcon />
-		</a>
+		</Button>
 	</h1>
 	{#await privateNotes}
 		<div

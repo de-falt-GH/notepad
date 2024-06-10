@@ -1,4 +1,5 @@
 export * from './animation'
 export * from './date'
+export * from './debounce'
 export * from './styling'
 export * from './local-storage'

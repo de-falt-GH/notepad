@@ -47,6 +47,25 @@ type FetchNotesParameters = {
 	skip?: number
 }
 
+type CreateNoteParameters = {
+	name: string
+	data: string
+	public: boolean
+}
+
+type FetchedNote = {
+	id: number
+	name: string
+	data: string
+	public: boolean
+}
+
+type UpdateNoteParameters = {
+	name: string
+	data: string
+	public: boolean
+}
+
 export const apiClient = {
 	async register(params: RegisterParameters): Promise<string | null> {
 		try {
@@ -103,5 +122,40 @@ export const apiClient = {
 			params: { search, limit, skip },
 		})
 		return { notes }
+	},
+
+	async createNote({
+		name,
+		data,
+		public: isPublic,
+	}: CreateNoteParameters): Promise<number | null> {
+		try {
+			const {
+				data: { noteId },
+			} = await axiosInstance.post('/notes', {
+				name,
+				data,
+				public: isPublic,
+			})
+			return Number(noteId)
+		} catch {
+			return null
+		}
+	},
+
+	async fetchNote(noteId: number): Promise<FetchedNote | null> {
+		try {
+			const { data: note } = await axiosInstance.get(`/notes/${noteId}`)
+			return note
+		} catch {
+			return null
+		}
+	},
+
+	async updateNote(
+		noteId: number,
+		params: UpdateNoteParameters,
+	): Promise<void> {
+		await axiosInstance.put(`/notes/${noteId}`, params)
 	},
 }
