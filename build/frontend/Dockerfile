@@ -15,4 +15,4 @@ ARG BACKEND_PORT
 COPY . .
 RUN pnpm build
 
-CMD ["sh", "-c", "serve ./build -l ${FRONTEND_PORT}"]
+CMD ["sh", "-c", "PORT=${FRONTEND_PORT} node build"]

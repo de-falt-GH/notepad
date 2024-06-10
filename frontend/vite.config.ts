@@ -17,6 +17,10 @@ const config: UserConfigFn = ({ mode }) => {
 		define: {
 			__BACKEND_PORT__: backendPort,
 		},
+
+		build: {
+			chunkSizeWarningLimit: 2000,
+		},
 	})
 }
 
