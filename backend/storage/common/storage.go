@@ -11,6 +11,7 @@ import (
 type Storage interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest) (id int, err error)
 	DetailUser(ctx context.Context, req *DetailUserRequest) (res *DetailUserResponse, err error)
+	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
 	ListPublicNotes(ctx context.Context, req *ListPublicNotesRequest) (res []Note, err error)
 }
 
@@ -85,6 +86,16 @@ func (s storage) ListPublicNotes(ctx context.Context, req *ListPublicNotesReques
 		err = rows.Scan(&note.Id, &note.UserId, &note.Name, &note.Data, &note.Public, &note.Updated, &note.AuthorName)
 		res = append(res, note)
 	}
+
+	return
+}
+
+func (s storage) DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error) {
+	query := `SELECT n.id, u.id, n.name, n.data, n.public, n.created, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.id=$1`
+	args := []any{req.Id}
+
+	row := s.conn.QueryRow(ctx, query, args...)
+	err = row.Scan(&res.Id, &res.UserId, &res.Name, &res.Data, &res.Public, &res.Created, &res.Updated, &res.AuthorName)
 
 	return
 }

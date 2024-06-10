@@ -38,6 +38,10 @@ type ListPublicNotesRequest struct {
 	Limit  int
 }
 
+type DetailNoteRequest struct {
+	Id int
+}
+
 type Note struct {
 	Id         int
 	UserId     int

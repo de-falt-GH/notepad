@@ -123,6 +123,8 @@ func (s service) UpdateNote(ctx *gin.Context) {
 		return
 	}
 
+	// TODO: нет проверки на владение заметкой
+
 	if err := s.storage.UpdateNote(ctx, &user_storage.UpdateNoteRequest{
 		Id:     noteId,
 		Name:   req.Name,
@@ -132,32 +134,6 @@ func (s service) UpdateNote(ctx *gin.Context) {
 		s.log.Error(err)
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "updating note failed failed"})
 		return
-	}
-}
-
-func (s service) DetailNote(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid note id"})
-		return
-	}
-
-	// TODO: check that you own the note, lol
-
-	if res, err := s.storage.DetailNote(ctx, &user_storage.DetailNoteRequest{
-		Id: id,
-	}); err != nil {
-		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"error": "note not found"})
-		return
-	} else {
-		ctx.IndentedJSON(http.StatusOK, DetailNoteResponse{
-			Id:     res.Id,
-			Name:   res.Name,
-			Data:   res.Data,
-			Public: res.Public,
-		})
 	}
 }
 

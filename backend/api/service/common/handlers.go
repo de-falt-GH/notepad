@@ -2,6 +2,7 @@ package common
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -108,4 +109,31 @@ func (s service) ListPublicNotes(ctx *gin.Context) {
 	}
 
 	ctx.IndentedJSON(http.StatusOK, ListPublicNotesResponse{Notes: notes})
+}
+
+func (s service) DetailNote(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid note id"})
+		return
+	}
+
+	// TODO: check that you own the note, lol
+
+	if res, err := s.storage.DetailNote(ctx, &c_storage.DetailNoteRequest{
+		Id: id,
+	}); err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(http.StatusNotFound, gin.H{"error": "note not found"})
+		return
+	} else {
+		ctx.IndentedJSON(http.StatusOK, DetailNoteResponse{
+			Id:       res.Id,
+			AuthorId: res.UserId,
+			Name:     res.Name,
+			Data:     res.Data,
+			Public:   res.Public,
+		})
+	}
 }

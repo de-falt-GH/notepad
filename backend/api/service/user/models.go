@@ -34,13 +34,6 @@ type UpdateNoteRequest struct {
 	Public bool   `json:"public"`
 }
 
-type DetailNoteResponse struct {
-	Id     int    `json:"id"`
-	Name   string `json:"name"`
-	Data   string `json:"data"`
-	Public bool   `json:"public"`
-}
-
 type ListNotesRequest struct {
 	Search string `form:"search"`
 	Limit  int    `form:"limit"`

@@ -42,10 +42,6 @@ type UpdateNoteRequest struct {
 	Public bool
 }
 
-type DetailNoteRequest struct {
-	Id int
-}
-
 type DeleteNoteRequest struct {
 	Id int
 }

@@ -32,3 +32,11 @@ type NoteListItem struct {
 type ListPublicNotesResponse struct {
 	Notes []NoteListItem `json:"notes"`
 }
+
+type DetailNoteResponse struct {
+	Id       int    `json:"id"`
+	AuthorId int    `json:"author_id"`
+	Name     string `json:"name"`
+	Data     string `json:"data"`
+	Public   bool   `json:"public"`
+}

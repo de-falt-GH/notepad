@@ -14,7 +14,6 @@ type Storage interface {
 
 	AddNote(ctx context.Context, req *AddNoteRequest) (res AddNoteResponse, err error)
 	UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err error)
-	DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error)
 	DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err error)
 	ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error)
 }
@@ -72,16 +71,6 @@ func (s storage) UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err er
 	args := []any{req.Name, req.Data, req.Public, req.Id}
 
 	_, err = s.conn.Exec(ctx, query, args...)
-
-	return
-}
-
-func (s storage) DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error) {
-	query := `SELECT n.id, u.id, n.name, n.data, n.public, n.created, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.id=$1`
-	args := []any{req.Id}
-
-	row := s.conn.QueryRow(ctx, query, args...)
-	err = row.Scan(&res.Id, &res.UserId, &res.Name, &res.Data, &res.Public, &res.Created, &res.Updated, &res.AuthorName)
 
 	return
 }
