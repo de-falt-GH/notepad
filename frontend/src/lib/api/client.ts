@@ -55,6 +55,7 @@ type CreateNoteParameters = {
 
 type FetchedNote = {
 	id: number
+	author_id: number
 	name: string
 	data: string
 	public: boolean
