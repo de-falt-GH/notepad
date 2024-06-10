@@ -77,11 +77,11 @@ func (s storage) UpdateNote(ctx context.Context, req *UpdateNoteRequest) (err er
 }
 
 func (s storage) DetailNote(ctx context.Context, req *DetailNoteRequest) (res Note, err error) {
-	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.id=$1`
+	query := `SELECT n.id, u.id, n.name, n.data, n.public, n.created, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.id=$1`
 	args := []any{req.Id}
 
 	row := s.conn.QueryRow(ctx, query, args...)
-	err = row.Scan(&res.Id, &res.Name, &res.Data, &res.Public)
+	err = row.Scan(&res.Id, &res.UserId, &res.Name, &res.Data, &res.Public, &res.Created, &res.Updated, &res.AuthorName)
 
 	return
 }
@@ -96,7 +96,7 @@ func (s storage) DeleteNote(ctx context.Context, req *DeleteNoteRequest) (err er
 }
 
 func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequest) (res []Note, err error) {
-	query := `SELECT n.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.user_id=$1 ORDER BY n.updated DESC`
+	query := `SELECT n.id, u.id, n.name, n.data, n.public, n.updated, u.name FROM note n LEFT JOIN "user" u ON n.user_id=u.id WHERE n.user_id=$1 ORDER BY n.updated DESC`
 	args := []any{req.UserId}
 	cnt := 2
 
@@ -121,7 +121,7 @@ func (s storage) ListPrivateNotes(ctx context.Context, req *ListPrivateNotesRequ
 	rows, err := s.conn.Query(ctx, query, args...)
 	for rows.Next() {
 		note := Note{}
-		err = rows.Scan(&note.Id, &note.Name, &note.Data, &note.Public, &note.Updated, &note.AuthorName)
+		err = rows.Scan(&note.Id, &note.UserId, &note.Name, &note.Data, &note.Public, &note.Updated, &note.AuthorName)
 		res = append(res, note)
 	}
 

@@ -24,6 +24,7 @@ type ListNotesRequest struct {
 type NoteListItem struct {
 	Id         int       `json:"id"`
 	Name       string    `json:"name"`
+	AuthorId   int       `json:"author_id"`
 	AuthorName string    `json:"author_name"`
 	Updated    time.Time `json:"updated"`
 }

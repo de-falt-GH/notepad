@@ -109,6 +109,13 @@ func (s service) AddNote(ctx *gin.Context) {
 }
 
 func (s service) UpdateNote(ctx *gin.Context) {
+	noteId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		s.log.Error(err)
+		ctx.IndentedJSON(400, gin.H{"error": "invalid note id"})
+		return
+	}
+
 	var req UpdateNoteRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		s.log.Error(err)
@@ -117,7 +124,7 @@ func (s service) UpdateNote(ctx *gin.Context) {
 	}
 
 	if err := s.storage.UpdateNote(ctx, &user_storage.UpdateNoteRequest{
-		Id:     req.Id,
+		Id:     noteId,
 		Name:   req.Name,
 		Data:   req.Data,
 		Public: req.Public,
@@ -132,7 +139,7 @@ func (s service) DetailNote(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		s.log.Error(err)
-		ctx.IndentedJSON(400, gin.H{"error": "invalid note id"})
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid note id"})
 		return
 	}
 
@@ -142,7 +149,7 @@ func (s service) DetailNote(ctx *gin.Context) {
 		Id: id,
 	}); err != nil {
 		s.log.Error(err)
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": "updating note failed failed"})
+		ctx.IndentedJSON(http.StatusNotFound, gin.H{"error": "note not found"})
 		return
 	} else {
 		ctx.IndentedJSON(http.StatusOK, DetailNoteResponse{

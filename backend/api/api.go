@@ -22,6 +22,7 @@ func Serve(commonStorage commonStorage.Storage, userStorage userStorage.Storage,
 	router.Use(func(ctx *gin.Context) {
 		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		ctx.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		ctx.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT")
 
 		if ctx.Request.Method == "OPTIONS" {
 			ctx.Writer.WriteHeader(http.StatusOK)

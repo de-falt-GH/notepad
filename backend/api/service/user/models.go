@@ -29,7 +29,6 @@ type AddNoteRequest struct {
 }
 
 type UpdateNoteRequest struct {
-	Id     int    `json:"id"`
 	Name   string `json:"name"`
 	Data   string `json:"data"`
 	Public bool   `json:"public"`

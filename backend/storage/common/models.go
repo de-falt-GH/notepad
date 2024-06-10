@@ -40,6 +40,7 @@ type ListPublicNotesRequest struct {
 
 type Note struct {
 	Id         int
+	UserId     int
 	Name       string
 	Data       string
 	Public     bool
