@@ -4,7 +4,7 @@
 	import { cn } from '@/lib/utils'
 	import { apiClient } from '@/lib/api'
 	import * as Avatar from '@/lib/components/ui/avatar'
-	import { PencilIcon, LogOutIcon } from 'lucide-svelte/icons'
+	import { LogOutIcon } from 'lucide-svelte/icons'
 	import { goto } from '$app/navigation'
 
 	let className = ''
@@ -30,7 +30,7 @@
 		})()
 
 	async function onLogOut() {
-		authToken.set('')
+		authToken.set(null)
 		await goto('/')
 	}
 </script>
@@ -47,15 +47,6 @@
 				>{nameAbbr}</Avatar.Fallback
 			>
 		</Avatar.Root>
-		<a
-			class={buttonVariants({
-				variant: 'outline',
-				className: 'gap-1 bg-yellow-200 p-2',
-			})}
-			href="/notes/new"
-		>
-			<PencilIcon class="h-6 w-6" />
-		</a>
 	{:else}
 		<a class={buttonVariants({ variant: 'outline' })} href="/login">
 			Login

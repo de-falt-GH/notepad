@@ -34,7 +34,7 @@ type Profile = {
 	info: string
 }
 
-type NoteFeedItem = {
+export type NoteFeedItem = {
 	id: number
 	name: string
 	author_name: string // TODO: лень под camelCase переделать
@@ -87,6 +87,19 @@ export const apiClient = {
 		const {
 			data: { notes },
 		} = await axiosInstance.get('/notes/public', {
+			params: { search, limit, skip },
+		})
+		return { notes }
+	},
+
+	async fetchPrivateNotes({
+		search = '',
+		limit = 20,
+		skip = 0,
+	}: FetchNotesParameters = {}): Promise<{ notes: NoteFeedItem[] }> {
+		const {
+			data: { notes },
+		} = await axiosInstance.get('/notes/private', {
 			params: { search, limit, skip },
 		})
 		return { notes }

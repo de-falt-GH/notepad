@@ -1,53 +1,80 @@
 <script lang="ts">
-	import * as Card from '@/lib/components/ui/card'
 	import { apiClient } from '@/lib/api'
-	import { getRelativeTimeString } from '@/lib/utils'
-	import { Loader2Icon } from 'lucide-svelte'
+	import { Loader2Icon, PencilIcon } from 'lucide-svelte'
+	import { authToken } from '@/lib/auth'
+	import type { NoteFeedItem } from '@/lib/api/client'
+	import NoteLink from './NoteLink.svelte'
+	import type { ComponentProps } from 'svelte'
+	import { buttonVariants } from '@/lib/components/ui/button'
 
-	type NoteLinkData = {
-		id: number
-		name: string
-		authorName: string
-		updated: Date
-	}
+	type NoteLinkData = ComponentProps<NoteLink>
 
-	$: notes = apiClient.fetchPublicNotes().then(({ notes: fetchedNotes }) =>
-		fetchedNotes.map(
-			({ id, name, author_name, updated }) =>
-				({
-					id,
-					name,
-					authorName: author_name,
-					updated: new Date(updated),
-				}) satisfies NoteLinkData,
-		),
-	)
+	const mapToLinkData = ({ id, name, author_name, updated }: NoteFeedItem) =>
+		({
+			id,
+			name,
+			authorName: author_name,
+			updated: new Date(updated),
+		}) satisfies NoteLinkData
+
+	$: publicNotes = apiClient
+		.fetchPublicNotes()
+		.then(({ notes }) => notes.map(mapToLinkData))
+
+	$: privateNotes =
+		$authToken !== null
+			? apiClient
+					.fetchPrivateNotes()
+					.then(({ notes }) => notes.map(mapToLinkData))
+			: null
 </script>
 
-<div
-	class="grid grid-cols-1 items-stretch gap-4 pt-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
->
-	{#await notes}
+{#if privateNotes !== null}
+	<h1 class="flex items-center gap-2 text-lg font-bold">
+		<span>My Notes</span>
+		<a
+			href="notes/new"
+			class={buttonVariants({ variant: 'outline', class: 'h-6 w-6 p-1' })}
+		>
+			<PencilIcon />
+		</a>
+	</h1>
+	{#await privateNotes}
 		<div
 			class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
 		>
-			<Loader2Icon class=" animate-spin" />
+			<Loader2Icon class="animate-spin" />
 		</div>
-	{:then notes}
-		{#each notes as { id, name, authorName, updated }}
-			<a href="notes/{id}">
-				<Card.Root
-					class="h-full w-full drop-shadow-sm transition hover:-translate-y-1 hover:drop-shadow-md"
-				>
-					<Card.Header>
-						<Card.Title>{name}</Card.Title>
-						<Card.Description>
-							<div>by {authorName}</div>
-							<div>updated {getRelativeTimeString(updated)}</div>
-						</Card.Description>
-					</Card.Header>
-				</Card.Root>
-			</a>
-		{/each}
+	{:then privateNotes}
+		<div
+			class="grid grid-cols-1 items-stretch gap-4 pt-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+		>
+			{#each privateNotes as note}
+				<NoteLink {...note} />
+			{/each}
+		</div>
+		{#if privateNotes.length == 0}
+			<div
+				class="flex h-12 w-full items-center justify-center rounded-md border border-dashed border-black"
+			>
+				Create your first note!
+			</div>
+		{/if}
 	{/await}
-</div>
+
+	<h1 class="mt-4 text-lg font-bold">Public Notes</h1>
+{/if}
+
+{#await publicNotes}
+	<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+		<Loader2Icon class="animate-spin" />
+	</div>
+{:then publicNotes}
+	<div
+		class="grid grid-cols-1 items-stretch gap-4 pt-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+	>
+		{#each publicNotes as note}
+			<NoteLink {...note} />
+		{/each}
+	</div>
+{/await}
