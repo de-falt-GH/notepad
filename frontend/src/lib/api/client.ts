@@ -48,8 +48,15 @@ type FetchNotesParameters = {
 }
 
 export const apiClient = {
-	async register(params: RegisterParameters) {
-		console.log(await axiosInstance.post('/register', params))
+	async register(params: RegisterParameters): Promise<string | null> {
+		try {
+			const {
+				data: { token },
+			} = await axiosInstance.post('/register', params)
+			return token
+		} catch {
+			return null
+		}
 	},
 
 	async authenticate(
